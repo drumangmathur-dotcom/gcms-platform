@@ -79,21 +79,40 @@ Here is exactly where we stand.
 *   **PENDING (YOU)**: You need to put it on the internet.
 
 #### Baby Steps for Phase C:
-1.  **GitHub (Save the Code)**:
-    *   Create a new repository on [GitHub.com](https://github.com/new) called `gcms-platform`.
-    *   Run these commands in your VS Code terminal:
-        ```bash
-        git init
-        git add .
-        git commit -m "Initial Launch"
-        git branch -M main
-        git remote add origin https://github.com/YOUR_USERNAME/gcms-platform.git
-        git push -u origin main
-        ```
-2.  **Vercel (Publish the Site)**:
-    *   Go to [Vercel.com](https://vercel.com/new).
-    *   Click **"Import"** next to `gcms-platform`.
-    *   **IMPORTANT**: When it asks for "Environment Variables", you must Copy/Paste everything from your `.env.local` file (Supabase keys, Stripe keys, etc.).
-    *   Click **Deploy**.
+1.  [x] **GitHub (Save the Code)**:
+    *   **Status**: DONE. You ran the commands. Your code is safe.
+2.  [ ] **Vercel (The Publishing Step)**:
+    *   **Open**: Go to [Vercel.com/new](https://vercel.com/new).
+    *   **Import**: You will see your repo `gcms-platform` on the list. Click the **Import** button next to it.
+    *   **Configure**: You will see a screen titled "Configure Project".
+    *   ** CRITICAL STEP: Environment Variables**:
+        *   Click to expand the **"Environment Variables"** section.
+        *   Open your VS Code file `.env.local`.
+        *   Select ALL text (`Cmd+A`) and Copy (`Cmd+C`).
+        *   Go back to Vercel, click the first box (Key), and Paste (`Cmd+V`). Vercel automatically fills in all the keys for you!
+    *   **Launch**: Click the big **Deploy** button.
+    *   **Wait**: It will take about 2 minutes. When confetti appears, you are live!
 
 **Once you click Deploy, you are live.**
+
+### Phase D: Connecting your GoDaddy Domain (.com)
+
+If you buy your domain from GoDaddy, follow these steps **after** your Vercel site is live.
+
+1.  **Vercel Dashboard**:
+    *   Go to **Settings** -> **Domains**.
+    *   Type your domain (e.g., `clinical-standard.com`) and click **Add**.
+    *   Vercel will show you two values: an **A Record** (usually `76.76.21.21`) and a **CNAME** (usually `cname.vercel-dns.com`).
+
+2.  **GoDaddy Dashboard**:
+    *   Go to your Domain Portfolio -> Click on your domain -> **DNS**.
+    *   **Add New Record**:
+        *   Type: `A`
+        *   Name: `@`
+        *   Value: `76.76.21.21` (or whatever Vercel gave you)
+    *   **Add Another Record**:
+        *   Type: `CNAME`
+        *   Name: `www`
+        *   Value: `cname.vercel-dns.com`
+
+3.  **Wait**: DNS changes take about 1-2 hours. Vercel will automatically detect it and issue an SSL certificate (HTTPS) for you.
