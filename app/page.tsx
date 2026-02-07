@@ -71,26 +71,26 @@ export default function Home() {
                                             <div className="bg-slate-50 p-4 rounded-lg border border-slate-100">
                                                 <h4 className="font-bold text-slate-800 flex items-center gap-2">
                                                     <Building2 className="w-4 h-4 text-emerald-600" />
-                                                    Dr. Shroff&apos;s Charity Eye Hospital
+                                                    Amrita Hospital, Faridabad
                                                 </h4>
                                                 <p className="text-xs text-slate-500 mt-1">
-                                                    New Delhi | Est. 1914 | NABH Accredited
+                                                    Faridabad, NCR | India&apos;s Largest Private Hospital
                                                 </p>
                                                 <p className="text-sm text-slate-600 mt-2">
-                                                    North India&apos;s leading eye care institute. Specializing in Cataract, Glaucoma, and Pediatric Ophthalmology. Guaranteed wet lab hours.
+                                                    Home to advanced robotics (da Vinci Xi, Mako). Hands-on observerships in Robotic Surgery and Molecular Medicine.
                                                 </p>
                                             </div>
 
                                             <div className="bg-slate-50 p-4 rounded-lg border border-slate-100">
                                                 <h4 className="font-bold text-slate-800 flex items-center gap-2">
                                                     <Building2 className="w-4 h-4 text-emerald-600" />
-                                                    Amrita Hospital, Faridabad
+                                                    Amrita Hospital, Kochi
                                                 </h4>
                                                 <p className="text-xs text-slate-500 mt-1">
-                                                    Faridabad | India&apos;s Largest Private Hospital
+                                                    Kochi, Kerala | NABH Accredited
                                                 </p>
                                                 <p className="text-sm text-slate-600 mt-2">
-                                                    Home to advanced robotics (da Vinci Xi, Mako). Hands-on observerships in Robotic Surgery and Molecular Medicine.
+                                                    Center of Excellence in Cardiac Sciences, Oncology, and Neurosciences. State-of-the-art facilities for clinical training.
                                                 </p>
                                             </div>
                                         </div>
@@ -109,8 +109,8 @@ export default function Home() {
                                             className="object-cover"
                                         />
                                         <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-6">
-                                            <p className="text-white text-sm font-medium">Advanced Wet Lab Facility</p>
-                                            <p className="text-white/70 text-xs">Dr. Shroff&apos;s Charity Eye Hospital</p>
+                                            <p className="text-white text-sm font-medium">Advanced Medical Facilities</p>
+                                            <p className="text-white/70 text-xs">Amrita Hospitals</p>
                                         </div>
                                     </div>
                                 </div>
@@ -118,25 +118,39 @@ export default function Home() {
                                 <div className="grid md:grid-cols-2 gap-12 items-center w-full animate-in fade-in slide-in-from-bottom-4 duration-500">
                                     <div className="space-y-6">
                                         <h3 className="text-3xl font-serif font-bold text-slate-900">
-                                            Secure US/UK Clinical Rotations
+                                            Train at World-Class Institutions
                                         </h3>
                                         <p className="text-slate-600">
-                                            For Indian Students. Get matched with Teaching Hospitals in the US and UK. Enhance your residency match probability.
+                                            For Indian Medical Students from Amrita. Secure clinical rotations at premier teaching hospitals in the US and UK.
                                         </p>
-                                        <ul className="space-y-3">
-                                            <li className="flex items-center gap-3 text-sm text-slate-700">
-                                                <CheckCircle2 className="w-5 h-5 text-blue-600" />
-                                                <span>Visa Letter Assistance</span>
-                                            </li>
-                                            <li className="flex items-center gap-3 text-sm text-slate-700">
-                                                <CheckCircle2 className="w-5 h-5 text-blue-600" />
-                                                <span>ACGME Accredited Sites</span>
-                                            </li>
-                                            <li className="flex items-center gap-3 text-sm text-slate-700">
-                                                <CheckCircle2 className="w-5 h-5 text-blue-600" />
-                                                <span>Match Probability Assessment</span>
-                                            </li>
-                                        </ul>
+
+                                        <div className="space-y-4 mt-4">
+                                            <div className="bg-slate-50 p-4 rounded-lg border border-slate-100">
+                                                <h4 className="font-bold text-slate-800 flex items-center gap-2">
+                                                    <GraduationCap className="w-4 h-4 text-blue-600" />
+                                                    Johns Hopkins University
+                                                </h4>
+                                                <p className="text-xs text-slate-500 mt-1">
+                                                    Baltimore, Maryland, USA | #1 Ranked Medical School
+                                                </p>
+                                                <p className="text-sm text-slate-600 mt-2">
+                                                    Clinical rotations in Internal Medicine, Surgery, and Research opportunities. ECFMG-approved observerships.
+                                                </p>
+                                            </div>
+
+                                            <div className="bg-slate-50 p-4 rounded-lg border border-slate-100">
+                                                <h4 className="font-bold text-slate-800 flex items-center gap-2">
+                                                    <GraduationCap className="w-4 h-4 text-blue-600" />
+                                                    University of Edinburgh
+                                                </h4>
+                                                <p className="text-xs text-slate-500 mt-1">
+                                                    Edinburgh, Scotland, UK | Russell Group University
+                                                </p>
+                                                <p className="text-sm text-slate-600 mt-2">
+                                                    Elective placements in Cardiology, Neuroscience, and Global Health. GMC-recognized pathways.
+                                                </p>
+                                            </div>
+                                        </div>
                                         <Button className="mt-4 bg-slate-900 hover:bg-slate-800 text-white px-8" asChild>
                                             <a href="/programs?type=outbound">Find Rotations</a>
                                         </Button>
@@ -149,8 +163,8 @@ export default function Home() {
                                             className="object-cover"
                                         />
                                         <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-6">
-                                            <p className="text-white text-sm font-medium">University Teaching Hospital</p>
-                                            <p className="text-white/70 text-xs">United States</p>
+                                            <p className="text-white text-sm font-medium">World-Class Medical Training</p>
+                                            <p className="text-white/70 text-xs">Johns Hopkins & Edinburgh</p>
                                         </div>
                                     </div>
                                 </div>
