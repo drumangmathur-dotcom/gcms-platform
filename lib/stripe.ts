@@ -1,13 +1,16 @@
 import Stripe from 'stripe';
 
-if (!process.env.STRIPE_SECRET_KEY) {
-    throw new Error('STRIPE_SECRET_KEY is missing. Please add it to your .env.local file.');
-}
-
-export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
-    apiVersion: '2023-10-16', // Use latest API version
-    typescript: true,
-});
+// Lazy initialization for Stripe to prevent build failures
+const getStripeInstance = () => {
+    if (!process.env.STRIPE_SECRET_KEY) {
+        console.warn('STRIPE_SECRET_KEY is missing. Stripe features will not work.');
+        return null;
+    }
+    return new Stripe(process.env.STRIPE_SECRET_KEY, {
+        apiVersion: '2023-10-16',
+        typescript: true,
+    });
+};
 
 export interface CreateConnectAccountParams {
     email: string;
@@ -25,6 +28,9 @@ export interface SplitPaymentParams {
  * This allows the hospital to receive their share of the fees.
  */
 export async function createHospitalAccount(params: CreateConnectAccountParams) {
+    const stripe = getStripeInstance();
+    if (!stripe) throw new Error('Stripe not initialized');
+
     const account = await stripe.accounts.create({
         type: 'express',
         country: 'US', // Assuming US/UK entities for now, can be dynamic
@@ -69,6 +75,9 @@ export async function createSplitPaymentIntent(params: SplitPaymentParams) {
     // In Stripe Connect "Destination Charges" (simpler for this use case):
     // Use application_fee_amount to specify what YOU keep.
     const applicationFeeCents = Math.round(totalAmountCents * (platformFeePercent / 100));
+
+    const stripe = getStripeInstance();
+    if (!stripe) throw new Error('Stripe not initialized');
 
     const paymentIntent = await stripe.paymentIntents.create({
         amount: totalAmountCents,
