@@ -4,10 +4,18 @@ if (!process.env.RAZORPAY_KEY_ID || !process.env.RAZORPAY_KEY_SECRET) {
     console.warn("Razorpay keys missing from .env.local");
 }
 
-export const razorpay = new Razorpay({
-    key_id: process.env.RAZORPAY_KEY_ID || '',
-    key_secret: process.env.RAZORPAY_KEY_SECRET || '',
-});
+// Lazy initialization to prevent build errors if keys are missing
+const getRazorpayInstance = () => {
+    if (!process.env.RAZORPAY_KEY_ID || !process.env.RAZORPAY_KEY_SECRET) {
+        // Return null or throw custom error if critical, but for build safety just warn
+        console.warn("Razorpay keys missing. Payment creation will fail.");
+        return null;
+    }
+    return new Razorpay({
+        key_id: process.env.RAZORPAY_KEY_ID,
+        key_secret: process.env.RAZORPAY_KEY_SECRET,
+    });
+};
 
 export interface CreateRazorpayOrderParams {
     amountUsd: number; // We will convert approx to INR
@@ -39,6 +47,10 @@ export async function createRazorpayOrder(params: CreateRazorpayOrderParams) {
     };
 
     try {
+        const razorpay = getRazorpayInstance();
+        if (!razorpay) {
+            throw new Error("Razorpay not initialized (missing keys)");
+        }
         const order = await razorpay.orders.create(options);
         return {
             success: true,
