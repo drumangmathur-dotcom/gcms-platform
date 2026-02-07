@@ -60,7 +60,11 @@ Here is exactly where we stand.
 
 ### Phase A: Database (Supabase)
 *   **AI Status**: **Done**. Code is connected. Tables (`users`, etc.) are created and verified.
-*   **PENDING (YOU)**: Nothing! This phase is 100% complete.
+*   **PENDING (YOU)**: One final key needed for the backend.
+    1.  [ ] **Supabase Service Role Key**:
+        *   Go to Supabase Dashboard -> Project Settings -> API.
+        *   Copy the `service_role` key (secret).
+        *   Paste it into `.env.local` as `SUPABASE_SERVICE_ROLE_KEY`.
 
 ### Phase B: Payments (Money)
 *   **AI Status**: **Done**. The "Universal Checkout" code is written. It splits payments and handles INR/USD automatically.
@@ -94,6 +98,15 @@ Here is exactly where we stand.
     *   **Wait**: It will take about 2 minutes. When confetti appears, you are live!
 
 **Once you click Deploy, you are live.**
+
+### 🚨 Emergency Option: The Direct Route (Skip GitHub)
+If the GitHub commands are stuck, do this instead:
+
+1.  Open your VS Code Terminal.
+2.  Type: `npx vercel`
+3.  Press **Enter** for all the questions (Yes, Yes, Yes).
+4.  It will open your browser to Log In.
+5.  It will deploy your site immediately.
 
 ### Phase D: Connecting your GoDaddy Domain (.com)
 

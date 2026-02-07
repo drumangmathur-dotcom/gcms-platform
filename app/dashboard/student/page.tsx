@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Navbar } from "@/components/layout/navbar";
 import { ApplicationTracker } from "@/components/widgets/application-tracker";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -6,6 +7,9 @@ import { Badge } from "@/components/ui/badge";
 import { MapPin, MessagesSquare, FileText, Home } from "lucide-react";
 
 export default function StudentDashboard() {
+    // Mock profile completion (replace with real data in production)
+    const profileCompletion: number = 75;
+
     return (
         <div className="min-h-screen bg-slate-50 font-sans">
             <Navbar />
@@ -16,8 +20,23 @@ export default function StudentDashboard() {
                         <h1 className="font-serif text-3xl font-bold text-slate-900">Welcome, Dr. Sarah</h1>
                         <p className="text-slate-500 text-sm mt-1">Student ID: GCMS-8821 | Status: <span className="text-emerald-600 font-medium">On Track</span></p>
                     </div>
-                    <div className="flex gap-2">
-                        <Button variant="outline">View Profile</Button>
+                    <div className="flex gap-2 items-center">
+                        {/* Profile Completion Badge */}
+                        <div className="text-right mr-4">
+                            <p className="text-xs text-slate-500 mb-1">Profile Completion</p>
+                            <div className="flex items-center gap-2">
+                                <div className="w-24 h-2 bg-slate-200 rounded-full overflow-hidden">
+                                    <div
+                                        className={`h-full ${profileCompletion === 100 ? 'bg-emerald-500' : 'bg-amber-500'}`}
+                                        style={{ width: `${profileCompletion}%` }}
+                                    />
+                                </div>
+                                <span className="text-sm font-semibold text-slate-700">{profileCompletion}%</span>
+                            </div>
+                        </div>
+                        <Link href="/onboarding">
+                            <Button variant="outline">Edit Profile</Button>
+                        </Link>
                         <Button className="bg-slate-900 text-white">Contact Support</Button>
                     </div>
                 </div>
@@ -65,7 +84,7 @@ export default function StudentDashboard() {
                         <CardHeader>
                             <CardTitle className="text-lg flex items-center gap-2">
                                 <Home className="w-5 h-5 text-slate-400" />
-                                assigned Housing
+                                Assigned Housing
                             </CardTitle>
                         </CardHeader>
                         <CardContent>
@@ -117,5 +136,5 @@ export default function StudentDashboard() {
                 </div>
             </main>
         </div>
-    )
+    );
 }

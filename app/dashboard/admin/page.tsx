@@ -7,45 +7,109 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { MoreHorizontal, DollarSign, Users, Building, AlertCircle } from "lucide-react";
 
-// Mock Kanban Data
+// Kanban Columns Mapping
 const COLUMNS = [
-    { id: 'new', title: 'New Applications', color: 'border-slate-200' },
-    { id: 'vetting', title: 'Vetting', color: 'border-blue-200' },
-    { id: 'payment', title: 'Payment Pending', color: 'border-amber-200' },
+    { id: 'submitted', title: 'New Applications', color: 'border-slate-200' },
+    { id: 'approved', title: 'Payment Pending', color: 'border-amber-200' },
+    { id: 'paid', title: 'Visa / Processing', color: 'border-blue-200' },
     { id: 'active', title: 'Active / Travel', color: 'border-emerald-200' },
 ];
 
-const APPLICANTS = [
-    { id: 1, name: "Dr. John Smith", program: "Phaco Fellowship", status: 'new', country: "UK" },
-    { id: 2, name: "Dr. Sarah Lee", program: "Robotics Observership", status: 'vetting', country: "USA" },
-    { id: 3, name: "Dr. Amit Patel", program: "Trauma Rotation", status: 'payment', country: "India" },
-    { id: 4, name: "Dr. Kemi Ojo", program: "Phaco Fellowship", status: 'active', country: "Nigeria" },
-];
-
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { processSplitPayment, SplitPaymentResult } from "@/lib/payments";
 import { findHousingMatch } from "@/lib/housing";
+import { createClient } from "@supabase/supabase-js";
 
 export default function AdminDashboard() {
     const [loadingPayment, setLoadingPayment] = useState(false);
     const [paymentResult, setPaymentResult] = useState<SplitPaymentResult | null>(null);
     const [housingResult, setHousingResult] = useState<any | null>(null);
+    const [applicants, setApplicants] = useState<any[]>([]);
+    const [loadingApplicants, setLoadingApplicants] = useState(true);
+
+    // Fetch real applications
+    useEffect(() => {
+        const fetchApplications = async () => {
+            const supabase = createClient(
+                process.env.NEXT_PUBLIC_SUPABASE_URL!,
+                process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+            );
+
+            // Join with users and programs
+            const { data, error } = await supabase
+                .from('applications')
+                .select(`
+                    id,
+                    status,
+                    created_at,
+                    users (full_name, citizenship),
+                    programs (title)
+                `);
+
+            if (data) {
+                setApplicants(data.map(app => ({
+                    id: app.id,
+                    name: (app.users as any)?.full_name || 'Unknown',
+                    program: (app.programs as any)?.title || 'Unknown Program',
+                    status: app.status, // matches DB status
+                    country: (app.users as any)?.citizenship || 'Unknown'
+                })));
+            }
+            setLoadingApplicants(false);
+        };
+
+        fetchApplications();
+    }, []);
 
     const runSplitPaymentSim = async () => {
         setLoadingPayment(true);
-        const result = await processSplitPayment({
-            studentId: "user_123",
-            programId: "prog_456",
-            facilityFeeShare: 20,
-            amountUsd: 2500,
-            hospitalStripeId: "acct_hospital_details"
-        });
-        setPaymentResult(result);
+        // Ensure supabase client is initialized or just use mock for this one if keys missing
+        try {
+            const result = await processSplitPayment({
+                studentId: "user_123",
+                programId: "prog_456",
+                facilityFeeShare: 20,
+                amountUsd: 2500,
+                hospitalStripeId: "acct_hospital_details"
+            });
+            setPaymentResult(result);
+        } catch (e) {
+            console.error("Payment sim error", e);
+        }
         setLoadingPayment(false);
     };
 
-    const runHousingSim = () => {
-        const result = findHousingMatch("New Delhi", new Date("2024-06-01"), new Date("2024-06-30"));
+    const [seedingHousing, setSeedingHousing] = useState(false);
+
+    const seedHousingData = async () => {
+        setSeedingHousing(true);
+        const supabase = createClient(
+            process.env.NEXT_PUBLIC_SUPABASE_URL!,
+            process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+        );
+
+        // Check if units exist
+        const { count } = await supabase.from('housing_units').select('*', { count: 'exact', head: true });
+
+        if (count === 0) {
+            // Seed data
+            await supabase.from('housing_units').insert([
+                { name: "Nizamuddin Apt 4B", city: "New Delhi", capacity: 2, price_per_month: 600 },
+                { name: "Defence Colony Villa", city: "New Delhi", capacity: 3, price_per_month: 850 },
+                { name: "Kochi Riverside A1", city: "Kochi", capacity: 2, price_per_month: 400 },
+            ]);
+            alert("Housing data seeded!");
+        } else {
+            console.log("Housing data already exists");
+        }
+        setSeedingHousing(false);
+    }
+
+    const runHousingSim = async () => {
+        // Ensure data exists first
+        await seedHousingData();
+
+        const result = await findHousingMatch("New Delhi", new Date("2024-06-01"), new Date("2024-06-30"));
         setHousingResult(result);
     };
     return (
@@ -74,21 +138,21 @@ export default function AdminDashboard() {
                             <Card>
                                 <CardContent className="p-6">
                                     <div className="flex justify-between items-start mb-2">
-                                        <p className="text-xs font-medium text-slate-500 uppercase">Gross Revenue (MTD)</p>
-                                        <DollarSign className="w-4 h-4 text-slate-400" />
+                                        <p className="text-xs font-medium text-slate-500 uppercase">Total Applications</p>
+                                        <Users className="w-4 h-4 text-slate-400" />
                                     </div>
-                                    <h3 className="text-2xl font-bold text-slate-900">$42,500</h3>
-                                    <p className="text-xs text-emerald-600 mt-1">+12% from last month</p>
+                                    <h3 className="text-2xl font-bold text-slate-900">{applicants.length}</h3>
+                                    <p className="text-xs text-emerald-600 mt-1">Real-time data</p>
                                 </CardContent>
                             </Card>
                             <Card>
                                 <CardContent className="p-6">
                                     <div className="flex justify-between items-start mb-2">
-                                        <p className="text-xs font-medium text-slate-500 uppercase">Active Students</p>
-                                        <Users className="w-4 h-4 text-slate-400" />
+                                        <p className="text-xs font-medium text-slate-500 uppercase">Gross Revenue (MTD)</p>
+                                        <DollarSign className="w-4 h-4 text-slate-400" />
                                     </div>
-                                    <h3 className="text-2xl font-bold text-slate-900">24</h3>
-                                    <p className="text-xs text-slate-500 mt-1">Across 3 Cities</p>
+                                    <h3 className="text-2xl font-bold text-slate-900">$42,500</h3>
+                                    <p className="text-xs text-emerald-600 mt-1">+12% from last month</p>
                                 </CardContent>
                             </Card>
                             <Card>
@@ -120,25 +184,31 @@ export default function AdminDashboard() {
                                     <div className={`flex items-center justify-between mb-4 pb-2 border-b-2 ${col.color}`}>
                                         <h4 className="font-semibold text-slate-700 text-sm">{col.title}</h4>
                                         <span className="text-xs bg-slate-200 text-slate-600 px-2 py-0.5 rounded-full">
-                                            {APPLICANTS.filter(a => a.status === col.id).length}
+                                            {applicants.filter(a => a.status === col.id).length}
                                         </span>
                                     </div>
 
                                     <div className="space-y-3">
-                                        {APPLICANTS.filter(a => a.status === col.id).map((applicant) => (
-                                            <Card key={applicant.id} className="cursor-pointer hover:shadow-md transition-shadow">
-                                                <CardContent className="p-4">
-                                                    <div className="flex justify-between items-start mb-2">
-                                                        <Badge variant="outline" className="text-[10px]">{applicant.country}</Badge>
-                                                        <button className="text-slate-400 hover:text-slate-600">
-                                                            <MoreHorizontal className="w-4 h-4" />
-                                                        </button>
-                                                    </div>
-                                                    <h5 className="font-semibold text-slate-800 text-sm">{applicant.name}</h5>
-                                                    <p className="text-xs text-slate-500 mt-1">{applicant.program}</p>
-                                                </CardContent>
-                                            </Card>
-                                        ))}
+                                        {loadingApplicants ? (
+                                            <div className="text-sm text-slate-400 italic">Loading...</div>
+                                        ) : applicants.filter(a => a.status === col.id).length === 0 ? (
+                                            <div className="text-sm text-slate-300 italic p-4 border border-dashed border-slate-200 rounded">No applications</div>
+                                        ) : (
+                                            applicants.filter(a => a.status === col.id).map((applicant) => (
+                                                <Card key={applicant.id} className="cursor-pointer hover:shadow-md transition-shadow">
+                                                    <CardContent className="p-4">
+                                                        <div className="flex justify-between items-start mb-2">
+                                                            <Badge variant="outline" className="text-[10px]">{applicant.country}</Badge>
+                                                            <button className="text-slate-400 hover:text-slate-600">
+                                                                <MoreHorizontal className="w-4 h-4" />
+                                                            </button>
+                                                        </div>
+                                                        <h5 className="font-semibold text-slate-800 text-sm">{applicant.name}</h5>
+                                                        <p className="text-xs text-slate-500 mt-1">{applicant.program}</p>
+                                                    </CardContent>
+                                                </Card>
+                                            ))
+                                        )}
                                     </div>
                                 </div>
                             ))}
@@ -220,8 +290,8 @@ export default function AdminDashboard() {
                                             Status: {housingResult.status}
                                         </div>
                                     ) : (
-                                        <Button variant="outline" className="w-full" onClick={runHousingSim}>
-                                            Run Allocation Algorithm
+                                        <Button variant="outline" className="w-full" onClick={runHousingSim} disabled={seedingHousing}>
+                                            {seedingHousing ? "Seeding Data..." : "Run Allocation Algorithm"}
                                         </Button>
                                     )}
                                 </CardContent>

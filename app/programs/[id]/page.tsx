@@ -238,10 +238,8 @@ export default function ProgramDetails() {
 
                                         <div className="pt-4 border-t border-slate-100">
                                             <CheckoutButton
-                                                programId={program.id}
-                                                title={program.title}
+                                                programId={String(program.id)}
                                                 price={program.price}
-                                                country={program.city.includes("India") || program.city.includes("Delhi") || program.city.includes("Faridabad") ? "India" : "USA"}
                                             />
                                         </div>
                                     </div>
