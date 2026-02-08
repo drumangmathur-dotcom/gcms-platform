@@ -59,10 +59,12 @@ export async function findHousingMatch(city: string, startDate: Date, endDate: D
             return { status: 'ERROR', message: 'Failed to fetch housing inventory.' };
         }
 
+        // Explicitly type units as HousingUnit[] to help TypeScript
+        const typedUnits: HousingUnit[] = units;
         const availableUnits: HousingUnit[] = [];
 
         // 2. Check availability for each
-        for (const unit of units) {
+        for (const unit of typedUnits) {
             // Note: In a real high-traffic app, we'd do this join in SQL or a stored procedure
             // But for this scale, individual checks are acceptable or we could simple fetch all bookings
             const isAvailable = await isUnitAvailable(unit.id, unit.capacity, startDate, endDate);
